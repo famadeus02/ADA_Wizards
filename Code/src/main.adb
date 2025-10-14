@@ -1,5 +1,10 @@
 with MicroBit.Console; use MicroBit.Console;
 use MicroBit;
+with Ada.Real_Time;  use Ada.Real_Time;
+with Sense; use Sense;
+with MicroBit.Types; use MicroBit.Types;
+
+
 -- USN PROJECT TEMPLATE INTELLIGENT REAL-TIME SYSTEMS
 -- Project name: [project name]
 -- Project members: [name, name, .. ]
@@ -19,9 +24,15 @@ use MicroBit;
 -- Open a View > Cross Platforms > Serial Ports to see Put_Line output. Set the baud rate to 115.200
 procedure Main with Priority => 0 is
 
+startTime : Time;
+
 begin
    Put_Line (" <-- The zero means: Let's get started...");
    loop
-      null;
+   startTime := Clock;
+   Put_Line ( Distance_cm'Image(Sense.distanceValues.ReadLeftSensor) );
+
+
+   delay until startTime + Milliseconds ( 25 );
    end loop;
 end Main;
