@@ -1,9 +1,9 @@
 with MicroBit.Console; use MicroBit.Console;
 use MicroBit;
 with Ada.Real_Time;  use Ada.Real_Time;
-with Sense; use Sense;
+with Sense;
 with MicroBit.Types; use MicroBit.Types;
-
+with Tasks.Think;
 
 -- USN PROJECT TEMPLATE INTELLIGENT REAL-TIME SYSTEMS
 -- Project name: [project name]
@@ -25,14 +25,17 @@ with MicroBit.Types; use MicroBit.Types;
 procedure Main with Priority => 0 is
 
 startTime : Time;
+fff : Time_Span;
 
 begin
    Put_Line (" <-- The zero means: Let's get started...");
    loop
-   startTime := Clock;
-   Put_Line ( Distance_cm'Image(Sense.distanceValues.ReadLeftSensor) );
+   --  startTime := Clock;
+   --  Put_Line ( Distance_cm'Image(Sense.distanceValues.ReadLeftSensor) );
 
 
-   delay until startTime + Milliseconds ( 25 );
+   --  delay until startTime + Milliseconds ( 25 );
+
+   null;
    end loop;
 end Main;
