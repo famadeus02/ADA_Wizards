@@ -15,7 +15,7 @@ package body Act is
       if Forward > 0 then
          MotorDriver.Drive(DFR0548.Forward, (Forward, Forward, Forward, Forward));
       elsif Forward < 0 then
-         MotorDriver.Drive(DFR0548.Backward, (-Forward, -Forward, -Forward, -Forward));
+         MotorDriver.Drive(DFR0548.Backward, (Forward, Forward, Forward, Forward));
       else
          MotorDriver.Drive(DFR0548.Stop);
       end if;
@@ -28,7 +28,7 @@ package body Act is
          MotorDriver.Drive(DFR0548.Forward, (0, 0, Right, Right));
       elsif Right < 0 then
          -- Right wheels backward, left wheels stop
-         MotorDriver.Drive(DFR0548.Backward, (-Right, -Right, 0, 0));
+         MotorDriver.Drive(DFR0548.Backward, (Right, Right, 0, 0));
       else
          MotorDriver.Drive(DFR0548.Stop);
       end if;
@@ -41,7 +41,7 @@ package body Act is
          MotorDriver.Drive(DFR0548.Forward, (Left, Left, 0, 0));
       elsif Left < 0 then
          -- Left wheels backward, right wheels stop
-         MotorDriver.Drive(DFR0548.Backward, (0, 0, -Left, -Left));
+         MotorDriver.Drive(DFR0548.Backward, (0, 0, Left, Left));
       else
          MotorDriver.Drive(DFR0548.Stop);
       end if;
@@ -52,11 +52,11 @@ package body Act is
       if Rotation > 0 then
          -- Left wheels forward, right wheels backward
          MotorDriver.Drive(DFR0548.Forward, (0, 0, Rotation, Rotation));
-         MotorDriver.Drive(DFR0548.Backward, (-Rotation, -Rotation, 0, 0));
+         MotorDriver.Drive(DFR0548.Backward, (Rotation, Rotation, 0, 0));
       elsif Rotation < 0 then
          -- Right wheels forward, left wheels backward
          MotorDriver.Drive(DFR0548.Forward, (Rotation, Rotation, 0, 0));
-         MotorDriver.Drive(DFR0548.Backward, (0, 0, -Rotation, -Rotation));
+         MotorDriver.Drive(DFR0548.Backward, (0, 0, Rotation, Rotation));
       else
          MotorDriver.Drive(DFR0548.Stop);
       end if;
