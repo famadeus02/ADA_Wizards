@@ -3,33 +3,9 @@ use MicroBit;
 with MicroBit.Ultrasonic;
 with Ada.Real_Time;  use Ada.Real_Time;
 with MicroBit.Types; use MicroBit.Types;
-
+with ProtectedObjects; use ProtectedObjects;
 
 package body Sense is
-
-
-protected body DistanceValues is
-
-function ReadLeftSensor return Distance_cm is
-begin
-   return leftDistance;
-end ReadLeftSensor;
-
-function ReadRightSensor return Distance_cm is
-begin
-   return rightDistance;
-end ReadRightSensor;
-
-procedure UpdateSensors ( l_Distance : Distance_cm; r_Distance : Distance_cm ) is
-begin
-   leftDistance := l_Distance;
-   rightDistance := r_Distance;
-
-end UpdateSensors;
-
-end DistanceValues;
-
-
 
 -- Worst Case Compute Time is 0.131927490 Seconds.
 -- Happens mainly if ranges of both sensor drasticly change (i think)
@@ -47,8 +23,7 @@ elapsedTime : Time_Span;
 
 begin
    loop
-
-
+   
       startTime := Clock;
 
 
