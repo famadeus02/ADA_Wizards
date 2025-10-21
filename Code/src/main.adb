@@ -3,7 +3,7 @@ use MicroBit;
 with Ada.Real_Time;  use Ada.Real_Time;
 with Sense; use Sense;
 with MicroBit.Types; use MicroBit.Types;
-
+with Act; use Act;
 
 -- USN PROJECT TEMPLATE INTELLIGENT REAL-TIME SYSTEMS
 -- Project name: [project name]
