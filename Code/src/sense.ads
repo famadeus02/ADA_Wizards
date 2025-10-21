@@ -6,7 +6,7 @@ with MicroBit.Types; use MicroBit.Types;
 
 package Sense is
 
-   protected distanceValues is
+   protected DistanceValues is
       function ReadLeftSensor return Distance_cm;
       function ReadRightSensor return Distance_cm;
 
@@ -16,7 +16,7 @@ package Sense is
    private
       leftDistance : Distance_cm;
       rightDistance : Distance_cm;
-   end distanceValues;
+   end DistanceValues;
 
    task Sensor with Priority => 1;
 
