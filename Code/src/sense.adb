@@ -15,26 +15,29 @@ task body Sensor is
 package leftSensor is new Ultrasonic(MB_P16, MB_P0); -- Left sensor
 package rightSensor is new Ultrasonic(MB_P15, MB_P1); -- Right sensor
 
+DEADLINE : constant Time_Span := Milliseconds (200);
+
 -- Variables for timing
 iterationAmount : constant Integer := 10;
 iterationCounter : Integer := 1;
 startTime : Time := Clock;
 elapsedTime : Time_Span;
 
-
+tstDist : Distance_cm;
 begin
+   Put_Line ("TASK SENSE START");
    loop
 
       startTime := Clock;
-
-      -- Trenger man å lese begge to hver gang? Lese en annen hver gang 
-      DistanceValues.UpdateSensors (leftSensor.Read, rightSensor.Read ); -- Comp. time ca 50 ms?
-
+      tstDist := leftSensor.Read;
+      -- Trenger man å lese begge to hver gang? Lese en annen hver gang
+      DistanceValues.UpdateSensors (tstDist, rightSensor.Read ); -- Comp. time ca 50 ms?
+      --  Put_Line (tstDist'Image);
 
       -- ###Time of 1 compute
-      elapsedTime := (Clock - startTime);
-      Put_Line ("One reading time: " & To_Duration(elapsedTime)'Image & "Seconds");
-      delay 0.5;
+      --  elapsedTime := (Clock - startTime);
+      --  Put_Line ("One reading time: " & To_Duration(elapsedTime)'Image & "Seconds");
+      --  delay 0.5;
 
       -- ###Average of 10 compute time
       --  elapsedTime := elapsedTime + ( Clock - startTime );
@@ -47,6 +50,7 @@ begin
       --     elapsedTime := Time_Span_Zero;
       --     delay 0.5;
       --  end if;
+      delay until startTime + DEADLINE;
    end loop;
 end Sensor;
 
