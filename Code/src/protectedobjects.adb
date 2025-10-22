@@ -33,7 +33,7 @@ package body ProtectedObjects is
       return rightDistance;
    end ReadRightSensor;
 
-   procedure UpdateSensors ( l_Distance : Distance_cm; r_Distance : Distance_cm ) is
+   procedure UpdateSensors ( l_Distance, r_Distance : Distance_cm ) is
    begin
       leftDistance := l_Distance;
       rightDistance := r_Distance;
