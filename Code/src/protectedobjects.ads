@@ -8,7 +8,7 @@ package ProtectedObjects is
 
 
    -- Used in Act and Think
-   type Act_States is (Stop, Forward, Left, Right);
+   type Act_States is (Initialize, Forward, Left, Right, Rotate);
    protected ThinkResults is
 
       function GetCurrentState return Act_States;
@@ -26,7 +26,7 @@ package ProtectedObjects is
       function ReadLeftSensor return Distance_cm;
       function ReadRightSensor return Distance_cm;
 
-      procedure UpdateSensors (l_Distance : Distance_cm; r_Distance : Distance_cm);
+      procedure UpdateSensors (l_Distance, r_Distance : Distance_cm);
 
 
    private
