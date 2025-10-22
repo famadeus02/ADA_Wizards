@@ -14,5 +14,7 @@ package Act is
 
    procedure Set_Rotation (Rotation : Speed);
 
+   procedure Rotate_Degrees (Degrees : Integer);
+
    procedure Stop;
 end Act;

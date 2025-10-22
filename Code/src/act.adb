@@ -4,7 +4,8 @@ with MicroBit.Console; use MicroBit.Console;
 with MicroBit.Types; use MicroBit.Types;
 with MicroBit.MotorDriver; use MicroBit.MotorDriver;
 with DFR0548;
-with think;
+with ProtectedObjects; use ProtectedObjects;
+with HAL; use HAL;
 
 package body Act is
 
@@ -12,14 +13,17 @@ package body Act is
    Fixed_Speed : constant Speed := 2_000;
 
    procedure Set_Forward (Forward : Speed) is
+      Abs_Forward : Speed;
    begin
       if Forward > 0 then
-         MotorDriver.Drive(DFR0548.Forward, (Forward, Forward, Forward, Forward));
+         MotorDriver.Drive(MicroBit.MotorDriver.Forward,
+                          (UInt12(Forward), UInt12(Forward), UInt12(Forward), UInt12(Forward)));
       elsif Forward < 0 then
-         -- Use abs() to get absolute value
-         MotorDriver.Drive(DFR0548.Backward, (Forward, Forward, Forward, Forward));
+         Abs_Forward := abs(Forward);
+         MotorDriver.Drive(MicroBit.MotorDriver.Backward,
+                          (UInt12(Abs_Forward), UInt12(Abs_Forward), UInt12(Abs_Forward), UInt12(Abs_Forward)));
       else
-         MotorDriver.Drive(DFR0548.Stop);
+         MotorDriver.Drive(MicroBit.MotorDriver.Stop);
       end if;
    end Set_Forward;
 
@@ -27,22 +31,20 @@ package body Act is
       Abs_Rotation : Speed;
    begin
       if Rotation > 0 then
-         -- Rotate clockwise: left wheels forward, right wheels backward
-         MotorDriver.Drive(DFR0548.Forward, (0, 0, Rotation, Rotation));
-         MotorDriver.Drive(DFR0548.Backward, (Rotation, Rotation, 0, 0));
+         MotorDriver.Drive(MicroBit.MotorDriver.Forward, (0, 0, UInt12(Rotation), UInt12(Rotation)));
+         MotorDriver.Drive(MicroBit.MotorDriver.Backward, (UInt12(Rotation), UInt12(Rotation), 0, 0));
       elsif Rotation < 0 then
-         -- Rotate counter-clockwise: right wheels forward, left wheels backward
          Abs_Rotation := abs(Rotation);
-         MotorDriver.Drive(DFR0548.Forward, (Rotation, Rotation, 0, 0));
-         MotorDriver.Drive(DFR0548.Backward, (0, 0, Rotation, Rotation));
+         MotorDriver.Drive(MicroBit.MotorDriver.Forward, (UInt12(Abs_Rotation), UInt12(Abs_Rotation), 0, 0));
+         MotorDriver.Drive(MicroBit.MotorDriver.Backward, (0, 0, UInt12(Abs_Rotation), UInt12(Abs_Rotation)));
       else
-         MotorDriver.Drive(DFR0548.Stop);
+         MotorDriver.Drive(MicroBit.MotorDriver.Stop);
       end if;
    end Set_Rotation;
 
    procedure Rotate_Degrees (Degrees : Integer) is
       Rotation_Speed : constant Speed := 1_500;
-      Ms_Per_Degree : constant Integer := 10; -- Might need calibration
+      Ms_Per_Degree : constant Integer := 10;
       Abs_Degrees : Integer;
       Duration : Time_Span;
       End_Time : Time;
@@ -52,18 +54,16 @@ package body Act is
       end if;
 
       Abs_Degrees := abs(Degrees);
-      Duration := Milliseconds(Degrees * Ms_Per_Degree);
+      Duration := Milliseconds(Abs_Degrees * Ms_Per_Degree);
 
       if Degrees > 0 then
-         -- Rotate clockwise
          Set_Rotation(Rotation_Speed);
       else
-         -- Rotate counter-clockwise - pass negative to trigger elsif branch
          Set_Rotation(0 - Rotation_Speed);
       end if;
 
       End_Time := Clock + Duration;
-      delay until End_Time;
+      delay until End_time;
 
       Stop;
    end Rotate_Degrees;
@@ -72,12 +72,12 @@ package body Act is
       Abs_Right : Speed;
    begin
       if Right > 0 then
-         MotorDriver.Drive(DFR0548.Forward, (0, 0, Right, Right));
+         MotorDriver.Drive(MicroBit.MotorDriver.Forward, (0, 0, UInt12(Right), UInt12(Right)));
       elsif Right < 0 then
          Abs_Right := abs(Right);
-         MotorDriver.Drive(DFR0548.Backward, (Right, Right, 0, 0));
+         MotorDriver.Drive(MicroBit.MotorDriver.Backward, (UInt12(Abs_Right), UInt12(Abs_Right), 0, 0));
       else
-         MotorDriver.Drive(DFR0548.Stop);
+         MotorDriver.Drive(MicroBit.MotorDriver.Stop);
       end if;
    end Set_Right;
 
@@ -85,54 +85,50 @@ package body Act is
       Abs_Left : Speed;
    begin
       if Left > 0 then
-         MotorDriver.Drive(DFR0548.Forward, (Left, Left, 0, 0));
+         MotorDriver.Drive(MicroBit.MotorDriver.Forward, (UInt12(Left), UInt12(Left), 0, 0));
       elsif Left < 0 then
          Abs_Left := abs(Left);
-         MotorDriver.Drive(DFR0548.Backward, (0, 0, Left, Left));
+         MotorDriver.Drive(MicroBit.MotorDriver.Backward, (0, 0, UInt12(Abs_Left), UInt12(Abs_Left)));
       else
-         MotorDriver.Drive(DFR0548.Stop);
+         MotorDriver.Drive(MicroBit.MotorDriver.Stop);
       end if;
    end Set_Left;
 
    procedure Stop is
    begin
-      MotorDriver.Drive(DFR0548.Stop);
+      MotorDriver.Drive(MicroBit.MotorDriver.Stop);
    end Stop;
 
    task body Act is
       nextTime : Time := Clock;
-      Current_State : think.Command_Type;
+      currentState : ProtectedObjects.Act_States;
       Turn_Angle : constant := 45;
    begin
       loop
-         Current_State := think.Get_Command;
+         currentState := ProtectedObjects.ThinkResults.GetCurrentState;
 
-         case Current_State is
-            when think.Forward_Cmd =>
+         case currentState is
+            when Initialize =>
+               null;  -- Do nothing during initialization
+
+            when Forward =>
                Set_Forward(Fixed_Speed);
 
-            when think.Backward_Cmd =>
-               Set_Forward(0 - Fixed_Speed);
+            when Left =>
+               Rotate_Degrees(0 - Turn_Angle);  -- Turn left 45 degrees
 
-            when think.Turn_Left_Cmd =>
-               Rotate_Degrees(0 - Turn_Angle);  -- Counter-clockwise
+            when Right =>
+               Rotate_Degrees(Turn_Angle);  -- Turn right 45 degrees
 
-            when think.Turn_Right_Cmd =>
-               Rotate_Degrees(Turn_Angle);  -- Clockwise
-
-            when think.Set_Left_Cmd =>
-               Set_Left(Fixed_Speed);
-
-            when think.Set_Right_Cmd =>
-               Set_Right(Fixed_Speed);
-
-            when think.Stop_Cmd =>
-               Stop;
+            when Rotate =>
+               Set_Rotation(Fixed_Speed);  -- Continuous rotation
 
          end case;
 
          nextTime := nextTime + Milliseconds(20);
          delay until nextTime;
+
+         Put_Line ("Act Task - Current State: " & Act_States'Image(currentState));
 
       end loop;
    end Act;
