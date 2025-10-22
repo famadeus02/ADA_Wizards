@@ -34,7 +34,7 @@ package body Think is
       elsif l_true and r_true then
          sensors := Both;
       else
-         null;
+         sensors := Both;
       end if;
 
    end ParseSensor;
@@ -53,17 +53,19 @@ task body ThinkTask is
    -- Variables for task
    raw_LeftSensor, raw_RightSensor : Distance_cm;
    Sensors : Sensors_State;
-   currentState : Act_States := Stop; -- Initial Act_State
+   currentState : Act_States := Initialize; -- Initial Act_State
    currentTurn : Turns := Left; -- Initial turn status
 
    -- Variables for timing
-   iterationAmount : constant Integer := 10;
-   iterationCounter : Integer := 1;
+   ComputeTime : constant Boolean := True;
+   iterationAmount : constant Integer := 9;
+   iterationCounter : Integer := 0;
    startTime : Time := Clock;
    elapsedTime : Time_Span;
 
 begin
 loop
+   startTime := Clock;
 
    raw_LeftSensor := DistanceValues.ReadLeftSensor;
    raw_RightSensor := DistanceValues.ReadRightSensor;
@@ -86,6 +88,22 @@ loop
    else
       ThinkResults.UpdateActState (currentState);
    end if;
+
+   --  ###Average of 10 compute time
+   if ComputeTime then
+      elapsedTime := elapsedTime + ( Clock - startTime );
+      iterationCounter := iterationCounter + 1;
+      if iterationCounter = iterationAmount then
+
+         iterationCounter := 0;
+         elapsedTime := elapsedTime / iterationAmount;
+         Put_Line ( "Average comp. time of reading sensor values: "  & To_Duration(elapsedTime)'Image & " Seconds"); -- time elapsed
+         elapsedTime := Time_Span_Zero;
+         delay 0.5; -- Small delay to make results readable
+      end if;
+   end if;
+   -- ###Average of 10 compute time
+
 
 end loop;
 end ThinkTask;
