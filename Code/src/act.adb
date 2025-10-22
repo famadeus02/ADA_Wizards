@@ -109,7 +109,7 @@ package body Act is
 
          case currentState is
             when Initialize =>
-               null;  -- Do nothing during initialization
+               Set_Rotation (Fixed_Speed);
 
             when Forward =>
                Set_Forward(Fixed_Speed);
