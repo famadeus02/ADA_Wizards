@@ -5,11 +5,12 @@ with Ada.Real_Time;  use Ada.Real_Time;
 with MicroBit.Types; use MicroBit.Types;
 with ProtectedObjects; use ProtectedObjects;
 
-package body Sense is
-
 -- ###Worst Case Compute Time is 0.131927490 Seconds.
 -- ###Happens mainly if ranges of both sensor drasticly change (i think)
 -- ###Best case (No change in distance) is 0.0136
+
+package body Sense is
+
 task body Sensor is
 
 package leftSensor is new Ultrasonic(MB_P16, MB_P0); -- Left sensor
@@ -17,13 +18,15 @@ package rightSensor is new Ultrasonic(MB_P15, MB_P1); -- Right sensor
 
 DEADLINE : constant Time_Span := Milliseconds (150);
 
--- Variables for timing
+-- Timing variables:
 iterationAmount : constant Integer := 10;
 iterationCounter : Integer := 1;
 startTime : Time := Clock;
 elapsedTime : Time_Span;
 
+-- Testing distance:
 tstDist : Distance_cm;
+
 begin
    --  Put_Line ("TASK SENSE START");
    loop
@@ -51,8 +54,9 @@ begin
       --     delay 0.5;
       --  end if;
       delay until startTime + DEADLINE;
+      
    end loop;
-end Sensor;
 
+end Sensor;
 
 end Sense;
