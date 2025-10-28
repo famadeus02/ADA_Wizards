@@ -69,32 +69,38 @@ package body Act is
 
    task body Act is
       nextTime : Time := Clock;
+      currentState : ProtectedObjects.Act_States;
+      Turn_Angle : constant := 45;
+      startTime : Time;
    begin
+      Put_Line ("TASK ACT START!!");
       loop
-      -- Move forward for 2ms
-         Set_Forward (think.speedValue);
-         nextTime := nextTime + Milliseconds(20);
-         delay until nextTime;
-      -- From Think get which sensor something is in front of (left or right)
-        if
-         think.obstacleLeft
-         then
-            -- Turn right for 2ms
-            Set_Right (think.rightValue);
-            nextTime := nextTime + Milliseconds(20);
-            delay until nextTime;
-         elsif
-         think.obstacleRight
-         then
-            -- Turn left for 2ms
-            Set_Left (think.leftValue);
-            nextTime := nextTime + Milliseconds(20);
-            delay until nextTime;
-         end if;
-         -- Rotate for 2ms
-         Set_Rotation (think.rotationValue);
-         nextTime := nextTime + Milliseconds(20);
-         delay until nextTime;
+         startTime := Clock;
+         currentState := ProtectedObjects.ThinkResults.GetCurrentState;
+         --  case currentState is
+         --     when Initialize =>
+         --        null;  -- Do nothing during initialization
+
+         --     when Forward =>
+         --        Set_Forward(Fixed_Speed);
+         --        Put_Line ("FORWARDS");
+
+         --     when Left =>
+         --        Rotate_Degrees(0 - Turn_Angle);  -- Turn left 45 degrees
+         --        Put_Line ("LEFT");
+         --     when Right =>
+         --        Rotate_Degrees(Turn_Angle);  -- Turn right 45 degrees
+         --        Put_Line ("RIGHT");
+         --     when Rotate =>
+         --        Set_Rotation(Fixed_Speed);  -- Continuous rotation
+         --        Put_Line ("ROTATE");
+         --  end case;
+
+         --  nextTime := nextTime + Milliseconds(20);
+         --  delay until nextTime;
+         Put_Line ("Act Task - Current State: " & Act_States'Image(currentState));
+         delay until startTime + Milliseconds (300);
+
       end loop;
    end Act;
 
