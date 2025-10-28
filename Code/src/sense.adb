@@ -15,7 +15,7 @@ task body Sensor is
 package leftSensor is new Ultrasonic(MB_P16, MB_P0); -- Left sensor
 package rightSensor is new Ultrasonic(MB_P15, MB_P1); -- Right sensor
 
-DEADLINE : constant Time_Span := Milliseconds (200);
+DEADLINE : constant Time_Span := Milliseconds (150);
 
 -- Variables for timing
 iterationAmount : constant Integer := 10;
@@ -25,7 +25,7 @@ elapsedTime : Time_Span;
 
 tstDist : Distance_cm;
 begin
-   Put_Line ("TASK SENSE START");
+   --  Put_Line ("TASK SENSE START");
    loop
 
       startTime := Clock;

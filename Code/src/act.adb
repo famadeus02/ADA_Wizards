@@ -6,7 +6,7 @@ with MotorDriverMOD; use MotorDriverMOD;
 
 package body Act is
 
-   CAR_SPEED : constant Speeds := (4095,4095,4095,4095);
+   CAR_SPEED : constant Speeds := (2000,2000,2000,2000);
 
    procedure Set_Forward is
    begin
@@ -31,11 +31,18 @@ package body Act is
 
 
 task body Act is
+   -- Task variables
    currentState : Act_States := Initialize;
    startTime : Time;
-   DEADLINE : constant Time_Span := Milliseconds (300);
+   DEADLINE : constant Time_Span := Milliseconds (150);
+
+   -- Variables for timing
+   ComputeTime : constant Boolean := True;
+   iterationAmount : constant Integer := 9;
+   iterationCounter : Integer := 0;
+   elapsedTime : Time_Span := Time_Span_Zero;
 begin
-   Put_Line ("TASK ACT START!!");
+   --  Put_Line ("TASK ACT START!!");
    loop
       startTime := Clock;
       currentState := ThinkResults.GetCurrentState;
@@ -43,20 +50,33 @@ begin
       case currentState is
          when Forward =>
             Set_Forward;
-            Put_Line ("FORWARDS");
+            --  Put_Line ("FORWARDS");
          when Left =>
             Set_Left;
-            Put_Line ("LEFT");
+            --  Put_Line ("LEFT");
          when Right =>
             Set_Right;
-            Put_Line ("RIGHT");
+            --  Put_Line ("RIGHT");
          when Initialize =>
             Stop;
          when Rotate =>
             null;
       end case;
 
-      Put_Line ("Act Task - Current State: " & Act_States'Image(currentState));
+      --  Put_Line ("Act Task - Current State: " & Act_States'Image(currentState));
+
+      if ComputeTime then
+         elapsedTime := elapsedTime + ( Clock - startTime );
+         iterationCounter := iterationCounter + 1;
+         if iterationCounter = iterationAmount then
+
+            iterationCounter := 0;
+            elapsedTime := elapsedTime / iterationAmount;
+            Put_Line ( "Average comp. time  --ACT--  TASK: "  & To_Duration(elapsedTime)'Image & " Seconds"); -- time elapsed
+            elapsedTime := Time_Span_Zero;
+            --  delay 0.5; -- Small delay to make results readable
+         end if;
+      end if;
       delay until startTime + DEADLINE;
 
    end loop;

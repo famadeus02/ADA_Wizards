@@ -29,15 +29,16 @@ task body ThinkTask is
    ComputeTime : constant Boolean := True;
    iterationAmount : constant Integer := 9;
    iterationCounter : Integer := 0;
+   elapsedTime : Time_Span := Time_Span_Zero;
    startTime : Time := Clock;
-   elapsedTime : Time_Span;
-   DEADLINE : constant Time_Span := Milliseconds (250);
+
+   DEADLINE : constant Time_Span := Milliseconds (150);
 
 begin
-Put_Line ("TASK THINKING START");
+--  Put_Line ("TASK THINKING START");
 loop
    startTime := Clock;
-   Put_Line ("THINKING");
+   --  Put_Line ("THINKING");
 
    raw_LeftSensor := DistanceValues.ReadLeftSensor;
    raw_RightSensor := DistanceValues.ReadRightSensor;
@@ -45,17 +46,17 @@ loop
 
    case Sensors is
       when None => currentState := Forward;
-         Put_Line ("NO Sense");
+         --  Put_Line ("NO Sense");
       when Left =>
          currentState := Right;
          currentTurn := Right;
-         Put_Line ("LEFT Sense");
+         --  Put_Line ("LEFT Sense");
       when Right =>
          currentState := Left;
          currentTurn := Left;
-         Put_Line ("RIGHT Sens");
+         --  Put_Line ("RIGHT Sens");
       when Both => currentState := Rotate;
-         Put_Line ("BOTH sense");
+         --  Put_Line ("BOTH sense");
    end case;
 
 
@@ -66,18 +67,18 @@ loop
    end if;
 
    --  ###Average of 10 compute time
-   --  if ComputeTime then
-   --     elapsedTime := elapsedTime + ( Clock - startTime );
-   --     iterationCounter := iterationCounter + 1;
-   --     if iterationCounter = iterationAmount then
+   if ComputeTime then
+      elapsedTime := elapsedTime + ( Clock - startTime );
+      iterationCounter := iterationCounter + 1;
+      if iterationCounter = iterationAmount then
 
-   --        iterationCounter := 0;
-   --        elapsedTime := elapsedTime / iterationAmount;
-   --        Put_Line ( "Average comp. time of reading sensor values: "  & To_Duration(elapsedTime)'Image & " Seconds"); -- time elapsed
-   --        elapsedTime := Time_Span_Zero;
-   --        delay 0.5; -- Small delay to make results readable
-   --     end if;
-   --  end if;
+         iterationCounter := 0;
+         elapsedTime := elapsedTime / iterationAmount;
+         Put_Line ( "Average comp. time  THINK TASK: "  & To_Duration(elapsedTime)'Image & " Seconds"); -- time elapsed
+         elapsedTime := Time_Span_Zero;
+         --  delay 0.5; -- Small delay to make results readable
+      end if;
+   end if;
    -- ###Average of 10 compute time
 
    delay until startTime + DEADLINE;
@@ -86,7 +87,8 @@ end loop;
 end ThinkTask;
 
 procedure ParseSensor (raw_distanceL, raw_distanceR : Distance_cm; sensors : out Sensors_State) is
-      MINIMUM_DISTANCE : constant Distance_cm := 10;
+
+      MINIMUM_DISTANCE : constant Distance_cm := 15;
       l_true, r_true : Boolean := False;
    begin
 
