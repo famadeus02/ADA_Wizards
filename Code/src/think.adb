@@ -88,8 +88,8 @@ end ThinkTask;
 
 procedure ParseSensor (raw_distanceL, raw_distanceR : Distance_cm; sensors : out Sensors_State) is
 
-      -- Car has a deadzone on the sides, which are covered if the sensor range MINIMUM_DISTANCE is HIGHER then 11
-      MINIMUM_DISTANCE : constant Distance_cm := 15;
+      -- Car has a deadzone on the sides, which are covered if the sensor range MINIMUM_DISTANCE is HIGHER then 18,3 cm
+      MINIMUM_DISTANCE : constant Distance_cm := 19;
       l_true, r_true : Boolean := False;
    begin
 
