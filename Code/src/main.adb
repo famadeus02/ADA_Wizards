@@ -1,7 +1,6 @@
 with MicroBit.Console; use MicroBit.Console;
 use MicroBit;
 with Ada.Real_Time;  use Ada.Real_Time;
---  with PrintSense;
 with MicroBit.Types; use MicroBit.Types;
 with Think;
 with Sense;

@@ -104,6 +104,8 @@ procedure ParseSensor (raw_distanceL, raw_distanceR : Distance_cm; sensors : out
          r_true := True;
       end if;
 
+      -- Plagiat av Finite state machine papiret? Helt lik som en seksjon i første delen.
+      -- Men også veldig universal
       if not l_true and not r_true then
          sensors := None;
       elsif l_true and not r_true then
