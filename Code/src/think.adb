@@ -3,6 +3,10 @@ use MicroBit;
 with Ada.Real_Time;  use Ada.Real_Time;
 with MicroBit.Types; use MicroBit.Types;
 
+with Ada.Numerics; use Ada.Numerics;
+with Ada.Numerics.Elementary_Functions;
+use Ada.Numerics.Elementary_Functions;
+
 with ProtectedObjects; use ProtectedObjects;
 
 package body Think is
@@ -24,6 +28,20 @@ task body ThinkTask is
    Sensors : Sensors_State;
    currentState : Act_States := Initialize; -- Initial Act_State
    currentTurn : Act_States := Left; -- Initial turn status
+   previousState : Act_States := Forward;
+
+   -- Variables for Virtual Environment
+   UpperXBound, UpperYBound : constant Float := 150;
+   LowerXBound, LowerYBound : constant Float := -150;
+   currentXLocation : Float := 0;
+   currentYLocation : Float := 0;
+   currentRotation : Float := 0;
+   rotationStartTime : Time;
+   rotationElapsedTime : Time_Span := Time_Span_Zero;
+
+
+   lenY : Float := 0;
+   lenX : Float := 0;
 
    -- Variables for timing
    ComputeTime : constant Boolean := True;
@@ -45,20 +63,41 @@ loop
    ParseSensor (raw_LeftSensor, raw_RightSensor, Sensors);
 
    case Sensors is
-      when None => currentState := Forward;
+      when None =>
+         currentState := Forward;
          --  Put_Line ("NO Sense");
       when Left =>
-         currentState := Right;
+         currentState := Rotate;
          currentTurn := Right;
          --  Put_Line ("LEFT Sense");
       when Right =>
-         currentState := Left;
+         currentState := Rotate;
          currentTurn := Left;
          --  Put_Line ("RIGHT Sens");
-      when Both => currentState := Rotate;
+      when Both =>
+         currentState := Rotate;
          --  Put_Line ("BOTH sense");
    end case;
 
+
+   if previousState = Forward and currentState = Rotate then
+      rotationStartTime := Clock; -- Started rotation clock
+
+   elsif previousState = Rotate and currentState = Forward then
+      rotationElapsedTime := Clock - rotationStartTime;
+
+
+   end if;
+
+
+   if currentState = Forward then
+      lenX := cos(currentRotation);
+      lenY := sin(currentRotation);
+
+      currentXLocation := currentXLocation + lenX;
+      currentYLocation := currentYLocation + lenY;
+
+   end if;
 
    if currentState = Rotate then
       ThinkResults.UpdateActState (currentTurn);
@@ -66,19 +105,21 @@ loop
       ThinkResults.UpdateActState (currentState);
    end if;
 
-   --  ###Average of 10 compute time
-   if ComputeTime then
-      elapsedTime := elapsedTime + ( Clock - startTime );
-      iterationCounter := iterationCounter + 1;
-      if iterationCounter = iterationAmount then
+   previousState := currentState;
 
-         iterationCounter := 0;
-         elapsedTime := elapsedTime / iterationAmount;
-         Put_Line ( "Average comp. time  THINK TASK: "  & To_Duration(elapsedTime)'Image & " Seconds"); -- time elapsed
-         elapsedTime := Time_Span_Zero;
-         --  delay 0.5; -- Small delay to make results readable
-      end if;
-   end if;
+   --  ###Average of 10 compute time
+   --  if ComputeTime then
+   --     elapsedTime := elapsedTime + ( Clock - startTime );
+   --     iterationCounter := iterationCounter + 1;
+   --     if iterationCounter = iterationAmount then
+
+   --        iterationCounter := 0;
+   --        elapsedTime := elapsedTime / iterationAmount;
+   --        Put_Line ( "Average comp. time  THINK TASK: "  & To_Duration(elapsedTime)'Image & " Seconds"); -- time elapsed
+   --        elapsedTime := Time_Span_Zero;
+   --        --  delay 0.5; -- Small delay to make results readable
+   --     end if;
+   --  end if;
    -- ###Average of 10 compute time
 
    delay until startTime + DEADLINE;
@@ -88,38 +129,37 @@ end ThinkTask;
 
 procedure ParseSensor (raw_distanceL, raw_distanceR : Distance_cm; sensors : out Sensors_State) is
 
-      -- Car has a deadzone on the sides, which are covered if the sensor range MINIMUM_DISTANCE is HIGHER then 18,3 cm
-      MINIMUM_DISTANCE : constant Distance_cm := 19;
-      l_true, r_true : Boolean := False;
+   -- Car has a deadzone on the sides, which are covered if the sensor range MINIMUM_DISTANCE is HIGHER then 18,3 cm
+   MINIMUM_DISTANCE : constant Distance_cm := 19;
+   l_true, r_true : Boolean := False;
    begin
 
-      -- Check if reading from sensor is 0 which means out of range,
-      --  or within reading range but outside of minimum distance.
-      if raw_distanceL = 0 or raw_distanceL > MINIMUM_DISTANCE then
-         l_true := False;
-      else
-         l_true := True;
-      end if;
+   -- Check if reading from sensor is 0 which means out of range,
+   --  or within reading range but outside of minimum distance.
+   if raw_distanceL = 0 or raw_distanceL > MINIMUM_DISTANCE then
+      l_true := False;
+   else
+      l_true := True;
+   end if;
 
-      if raw_distanceR = 0 or raw_distanceR > MINIMUM_DISTANCE then
-         r_true := False;
-      else
-         r_true := True;
-      end if;
+   if raw_distanceR = 0 or raw_distanceR > MINIMUM_DISTANCE then
+      r_true := False;
+   else
+      r_true := True;
+   end if;
 
-      -- Plagiat av Finite state machine papiret? Helt lik som en seksjon i første delen.
-      -- Men også veldig universal
-      if not l_true and not r_true then
-         sensors := None;
-      elsif l_true and not r_true then
-         sensors := Left;
-      elsif not l_true and r_true then
-         sensors := Right;
-      elsif l_true and r_true then
-         sensors := Both;
-      else
-         sensors := Both;
-      end if;
 
-   end ParseSensor;
+   if not l_true and not r_true then
+      sensors := None;
+   elsif l_true and not r_true then
+      sensors := Left;
+   elsif not l_true and r_true then
+      sensors := Right;
+   elsif l_true and r_true then
+      sensors := Both;
+   else
+      sensors := Both;
+   end if;
+
+end ParseSensor;
 end Think;
