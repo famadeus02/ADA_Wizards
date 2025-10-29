@@ -4,6 +4,9 @@ with MicroBit.Console; use MicroBit.Console;
 with MicroBit.Types; use MicroBit.Types;
 with MotorDriverMOD; use MotorDriverMOD;
 
+with MicroBit.DisplayRT;
+with MicroBit.DisplayRT.Symbols;
+
 package body Act is
 
    CAR_SPEED : constant Speeds := (2000,2000,2000,2000);
@@ -37,7 +40,7 @@ task body Act is
    DEADLINE : constant Time_Span := Milliseconds (150);
 
    -- Variables for timing
-   ComputeTime : constant Boolean := True;
+   ComputeTime : constant Boolean := False;
    iterationAmount : constant Integer := 9;
    iterationCounter : Integer := 0;
    elapsedTime : Time_Span := Time_Span_Zero;
@@ -47,15 +50,19 @@ begin
       startTime := Clock;
       currentState := ThinkResults.GetCurrentState;
 
+      DisplayRT.Clear;
       case currentState is
          when Forward =>
             Set_Forward;
+            DisplayRT.Symbols.Up_Arrow;
             --  Put_Line ("FORWARDS");
          when Left =>
             Set_Left;
+            DisplayRT.Symbols.Right_Arrow;
             --  Put_Line ("LEFT");
          when Right =>
             Set_Right;
+            DisplayRT.Symbols.Left_Arrow;
             --  Put_Line ("RIGHT");
          when Initialize =>
             Stop;
