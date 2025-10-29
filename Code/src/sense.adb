@@ -23,16 +23,16 @@ iterationCounter : Integer := 1;
 startTime : Time := Clock;
 elapsedTime : Time_Span;
 
-tstDist : Distance_cm;
+leftDist, rightDist : Distance_cm;
 begin
    --  Put_Line ("TASK SENSE START");
    loop
 
       startTime := Clock;
-      tstDist := leftSensor.Read;
+      leftDist := leftSensor.Read;
+      rightDist := rightSensor.Read;
       -- Trenger man å lese begge to hver gang? Lese en annen hver gang
-      DistanceValues.UpdateSensors (tstDist, rightSensor.Read ); -- Comp. time ca 50 ms?
-      --  Put_Line (tstDist'Image);
+      DistanceValues.UpdateSensors (leftDist, rightDist ); -- Comp. time ca 50 ms?
 
       -- ###Time of 1 compute
       --  elapsedTime := (Clock - startTime);
