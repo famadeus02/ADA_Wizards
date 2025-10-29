@@ -17,15 +17,16 @@ task body ThinkTask is
    Sensors : Sensors_State;
    currentState : Act_States := Initialize; -- Initial Act_State
    currentTurn : Act_States := Left; -- Initial turn status
+   startTime : Time := Clock;
+   DEADLINE : constant Time_Span := Milliseconds (150);
 
    -- Timing variables:
    ComputeTime : constant Boolean := True;
    iterationAmount : constant Integer := 9;
    iterationCounter : Integer := 0;
    elapsedTime : Time_Span := Time_Span_Zero;
-   startTime : Time := Clock;
 
-   DEADLINE : constant Time_Span := Milliseconds (150);
+
 
 begin
 --  Put_Line ("TASK THINK START");

@@ -2,7 +2,7 @@ with Ada.Real_Time;  use Ada.Real_Time;
 with MicroBit; use MicroBit;
 with MicroBit.Console; use MicroBit.Console;
 with MicroBit.Types; use MicroBit.Types;
-with MotorDriverMOD; use MotorDriverMOD;
+with MotorDriverModified; use MotorDriverModified;
 
 with MicroBit.DisplayRT;
 with MicroBit.DisplayRT.Symbols;
@@ -14,22 +14,22 @@ package body Act is
 
    procedure Set_Forward is
    begin
-      MotorDriverMOD.Drive(Forward, CAR_SPEED);
+      MotorDriverModified.Drive(Forward, CAR_SPEED);
    end Set_Forward;
 
    procedure Set_Right is
    begin
-      MotorDriverMOD.Drive (Rotating_Right, CAR_SPEED);
+      MotorDriverModified.Drive (Rotating_Right, CAR_SPEED);
    end Set_Right;
 
    procedure Set_Left is
    begin
-      MotorDriverMOD.Drive (Rotating_Left, CAR_SPEED);
+      MotorDriverModified.Drive (Rotating_Left, CAR_SPEED);
    end Set_Left;
 
    procedure Stop is
    begin
-      MotorDriverMOD.Drive (Stop);
+      MotorDriverModified.Drive (Stop);
    end Stop;
 
 
