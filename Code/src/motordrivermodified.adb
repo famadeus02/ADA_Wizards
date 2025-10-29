@@ -29,7 +29,7 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 with MicroBit.I2C;
-package body MotorDriverMOD is
+package body MotorDriverModified is
 
 
    MD  : DFR0548.MotorDriver (MicroBit.I2C.ControllerExt);
@@ -127,4 +127,4 @@ package body MotorDriverMOD is
 
 begin
    Initialize;
-end MotorDriverMOD;
+end MotorDriverModified;

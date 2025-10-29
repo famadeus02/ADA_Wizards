@@ -31,7 +31,7 @@
 with DFR0548; use DFR0548;
 with HAL;     use HAL;
 
-package MotorDriverMOD is
+package MotorDriverModified is
 
    type Directions is (Forward,
                        Backward,
@@ -66,4 +66,4 @@ private
 
    procedure Initialize;
 
-end MotorDriverMOD;
+end MotorDriverModified;

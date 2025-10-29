@@ -1,16 +1,12 @@
 with MicroBit.Console; use MicroBit.Console;
 use MicroBit;
 with Ada.Real_Time;  use Ada.Real_Time;
-with MicroBit.Types; use MicroBit.Types;
 with ProtectedObjects; use ProtectedObjects;
 
 
 package body Think is
 
 task body ThinkTask is
-
-   -- Subtype of Act_States, only allows left/right keywords.
-   subtype Turns is Act_States range Left .. Right;
 
    -- Task variables:
    raw_LeftSensor, raw_RightSensor : Distance_cm;
@@ -29,56 +25,51 @@ task body ThinkTask is
 
 
 begin
---  Put_Line ("TASK THINK START");
-loop
-   startTime := Clock;
-   --  Put_Line ("THINKING");
+   loop
+      startTime := Clock;
 
-   raw_LeftSensor := DistanceValues.ReadLeftSensor;
-   raw_RightSensor := DistanceValues.ReadRightSensor;
-   ParseSensor (raw_LeftSensor, raw_RightSensor, Sensors);
+      raw_LeftSensor := DistanceValues.ReadLeftSensor;
+      raw_RightSensor := DistanceValues.ReadRightSensor;
+      ParseSensor (raw_LeftSensor, raw_RightSensor, Sensors);
 
-   -- Updating 'currentState' and 'currentTurn' based on sensor readings:
-   case Sensors is
-      when None => currentState := Forward;
-         --  Put_Line ("NON Sensed");
-      when Left =>
-         currentState := Right;
-         currentTurn := Right;
-         --  Put_Line ("LEFT Sensed");
-      when Right =>
-         currentState := Left;
-         currentTurn := Left;
-         --  Put_Line ("RIGHT Sensed");
-      when Both => currentState := Rotate;
-         --  Put_Line ("BOTH Sensed");
-   end case;
+      -- Updating 'currentState' and 'currentTurn' based on sensor readings:
+      case Sensors is
+         when None =>
+            currentState := Forward;
+         when Left =>
+            currentState := Right;
+            currentTurn := Right;
+         when Right =>
+            currentState := Left;
+            currentTurn := Left;
+         when Both =>
+            currentState := Rotate;
+      end case;
 
-   -- When in state rotate, it will continue turning in the direction it began turning:
-   if currentState = Rotate then
-      ThinkResults.UpdateActState (currentTurn);
-   else
-      ThinkResults.UpdateActState (currentState);
-   end if;
-
-   --  ###Average of 10 compute time
-   if ComputeTime then
-      elapsedTime := elapsedTime + ( Clock - startTime );
-      iterationCounter := iterationCounter + 1;
-      if iterationCounter = iterationAmount then
-
-         iterationCounter := 0;
-         elapsedTime := elapsedTime / iterationAmount;
-         Put_Line ( "Average comp. time  THINK TASK: "  & To_Duration(elapsedTime)'Image & " Seconds"); -- time elapsed
-         elapsedTime := Time_Span_Zero;
-         --  delay 0.5; -- Small delay used to make results readable in the Serial Monitor.
+      -- When in state rotate, it will continue turning in the direction it began turning:
+      if currentState = Rotate then
+         ThinkResults.UpdateActState (currentTurn);
+      else
+         ThinkResults.UpdateActState (currentState);
       end if;
-   end if;
-   -- ###Average of 10 compute time
 
-   delay until startTime + DEADLINE;
+      --  ###Average of 10 compute time
+      if ComputeTime then
+         elapsedTime := elapsedTime + ( Clock - startTime );
+         iterationCounter := iterationCounter + 1;
+         if iterationCounter = iterationAmount then
 
-end loop;
+            iterationCounter := 0;
+            elapsedTime := elapsedTime / iterationAmount;
+            Put_Line ( "Average comp. time  THINK TASK: "  & To_Duration(elapsedTime)'Image & " Seconds"); -- time elapsed
+            elapsedTime := Time_Span_Zero;
+         end if;
+      end if;
+      -- ###Average of 10 compute time
+
+      delay until startTime + DEADLINE;
+
+   end loop;
 end ThinkTask;
 
 
