@@ -3,9 +3,7 @@ use MicroBit;
 with MicroBit.Types; use MicroBit.Types;
 
 
-
 package ProtectedObjects is
-
 
    -- Used in Act and Think
    type Act_States is (Initialize, Forward, Left, Right, Rotate);

@@ -42,6 +42,4 @@ package body ProtectedObjects is
 
    end DistanceValues;
 
-
-
 end ProtectedObjects;
