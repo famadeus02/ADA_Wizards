@@ -37,7 +37,7 @@ task body Act is
    -- Task variables:
    currentState : Act_States := Initialize;
    startTime : Time;
-   DEADLINE : constant Time_Span := Milliseconds (150);
+   PERIODE : constant Time_Span := Milliseconds (150);
 
    -- Timing variables:
    ComputeTime : constant Boolean := True;
@@ -82,7 +82,7 @@ begin
       end if;
       -- ###Average of 10 compute time
 
-      delay until startTime + DEADLINE;
+      delay until startTime + PERIODE;
 
    end loop;
 

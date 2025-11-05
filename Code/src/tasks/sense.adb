@@ -15,7 +15,7 @@ task body Sensor is
    package rightSensor is new Ultrasonic(MB_P15, MB_P1); -- Right sensor
    leftDist, rightDist : Distance_cm;
    startTime : Time := Clock;
-   DEADLINE : constant Time_Span := Milliseconds (150);
+   PERIODE : constant Time_Span := Milliseconds (150);
 
 
    -- Timing variables:
@@ -49,7 +49,7 @@ begin
       end if;
       -- ###Average of 10 compute time
 
-      delay until startTime + DEADLINE;
+      delay until startTime + PERIODE;
 
    end loop;
 

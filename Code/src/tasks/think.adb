@@ -14,7 +14,7 @@ task body ThinkTask is
    currentState : Act_States := Initialize; -- Initial Act_State
    currentTurn : Act_States := Left; -- Initial turn status
    startTime : Time := Clock;
-   DEADLINE : constant Time_Span := Milliseconds (150);
+   PERIODE : constant Time_Span := Milliseconds (150);
 
    -- Timing variables:
    ComputeTime : constant Boolean := True;
@@ -67,7 +67,7 @@ begin
       end if;
       -- ###Average of 10 compute time
 
-      delay until startTime + DEADLINE;
+      delay until startTime + PERIODE;
 
    end loop;
 end ThinkTask;
