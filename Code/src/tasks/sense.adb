@@ -43,7 +43,7 @@ begin
 
             iterationCounter := 0;
             elapsedTime := elapsedTime / iterationAmount;
-            Put_Line ( "Average comp. time  THINK TASK: "  & To_Duration(elapsedTime)'Image & " Seconds"); -- time elapsed
+            Put_Line ( "Average comp. time  SENSE TASK: "  & To_Duration(elapsedTime)'Image & " Seconds"); -- time elapsed
             elapsedTime := Time_Span_Zero;
          end if;
       end if;

@@ -40,7 +40,7 @@ task body Act is
    DEADLINE : constant Time_Span := Milliseconds (150);
 
    -- Timing variables:
-   ComputeTime : constant Boolean := False;
+   ComputeTime : constant Boolean := True;
    iterationAmount : constant Integer := 9;
    iterationCounter : Integer := 0;
    elapsedTime : Time_Span := Time_Span_Zero;
@@ -76,7 +76,7 @@ begin
 
             iterationCounter := 0;
             elapsedTime := elapsedTime / iterationAmount;
-            Put_Line ( "Average comp. time  THINK TASK: "  & To_Duration(elapsedTime)'Image & " Seconds"); -- time elapsed
+            Put_Line ( "Average comp. time  ACT TASK: "  & To_Duration(elapsedTime)'Image & " Seconds"); -- time elapsed
             elapsedTime := Time_Span_Zero;
          end if;
       end if;
