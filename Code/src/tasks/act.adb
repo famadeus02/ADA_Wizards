@@ -10,20 +10,21 @@ package body Act is
 
    -- Speed set to 2000 out of 4095:
    CAR_SPEED : constant Speeds := (2000,2000,2000,2000);
+   CAR_SPEED_MAX : constant Speeds := (4095, 4095, 4095, 4095);
 
    procedure Set_Forward is
    begin
-      MotorDriverModified.Drive(Forward, CAR_SPEED);
+      MotorDriverModified.Drive(Forward, CAR_SPEED_MAX);
    end Set_Forward;
 
    procedure Set_Right is
    begin
-      MotorDriverModified.Drive (Rotating_Right, CAR_SPEED);
+      MotorDriverModified.Drive (Rotating_Right, CAR_SPEED_MAX);
    end Set_Right;
 
    procedure Set_Left is
    begin
-      MotorDriverModified.Drive (Rotating_Left, CAR_SPEED);
+      MotorDriverModified.Drive (Rotating_Left, CAR_SPEED_MAX);
    end Set_Left;
 
    procedure Stop is
